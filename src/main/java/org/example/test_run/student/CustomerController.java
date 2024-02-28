@@ -7,12 +7,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/v1/student")
-public class StudentController {
+public class CustomerController {
 
     private final StudentService studentService;
 
     @Autowired
-    public StudentController(StudentService studentService) {
+    public CustomerController(StudentService studentService) {
         this.studentService = studentService;
     }
 

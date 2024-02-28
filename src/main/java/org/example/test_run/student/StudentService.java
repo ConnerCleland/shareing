@@ -13,41 +13,41 @@ import java.util.Optional;
 @Service
 public class StudentService {
 
-    private final StudentRepository studentRepository;
+    private final StudentsServices studentsServices;
 
     @Autowired
-    public StudentService(StudentRepository studentRepository) {
-        this.studentRepository = studentRepository;
+    public StudentService(StudentsServices studentsServices) {
+        this.studentsServices = studentsServices;
     }
 
     public List<Student> getStudents(){
-        return studentRepository.findAll();
+        return studentsServices.findAll();
 
         }
     public Optional<Student> getStudentById(Long id) {
-        return studentRepository.findById(id);
+        return studentsServices.findById(id);
     }
 
     public void addNewStudent(Student student) {
-        Optional<Student> studentOptional = studentRepository
+        Optional<Student> studentOptional = studentsServices
                 .findStudentByEmail(student.getEmail());
         if (studentOptional.isPresent()) {
             throw new IllegalStateException("email Taken");
         }
-        studentRepository.save(student);
+        studentsServices.save(student);
     }
 
     public void deleteStudent(Long studentId) {
-        boolean exists = studentRepository.existsById(studentId);
+        boolean exists = studentsServices.existsById(studentId);
         if (!exists) {
             throw new IllegalStateException(
                     "student with ID " + studentId + "does not exists");
         }
-        studentRepository.deleteById(studentId);
+        studentsServices.deleteById(studentId);
     }
     @Transactional
     public void updateStudent(Long studentID, String name, String email) {
-        Student student = studentRepository.findById(studentID)
+        Student student = studentsServices.findById(studentID)
                 .orElseThrow(() -> new IllegalStateException(
                         "Student with id " + studentID + " does not exist"));
 
@@ -56,7 +56,7 @@ public class StudentService {
         }
 
         if (email != null && !email.isEmpty() && !Objects.equals(student.getEmail(), email)) {
-            Optional<Student> studentOptional = studentRepository.findStudentByEmail(email);
+            Optional<Student> studentOptional = studentsServices.findStudentByEmail(email);
             if (studentOptional.isPresent()) {
                 throw new IllegalStateException("Email is already taken");
             }
