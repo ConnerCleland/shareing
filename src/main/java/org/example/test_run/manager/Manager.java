@@ -1,4 +1,4 @@
-package org.example.test_run.student;
+package org.example.test_run.manager;
 
 import jakarta.persistence.*;
 
@@ -7,7 +7,7 @@ import java.time.Period;
 
 @Entity
 @Table
-public class Student {
+public class Manager {
     @Id
     @SequenceGenerator(
             name = "student_sequence",
@@ -19,31 +19,31 @@ public class Student {
             generator = "student_sequence"
     )
     private Long id;
-    private String name;
+    private String firstName;
     private String email;
-    private LocalDate dob;
+    private LocalDate DateOfBirth;
     @Transient
-    private Integer age;
+    private Integer howOld;
 
-    public Student() {
+    public Manager() {
     }
 
-    public Student(Long id,
+    public Manager(Long id,
                    String name,
                    String email,
                    LocalDate dob) {
         this.id = id;
-        this.name = name;
+        this.firstName = name;
         this.email = email;
-        this.dob = dob;
+        this.DateOfBirth = dob;
     }
 
-    public Student(String name,
+    public Manager(String name,
                    String email,
                    LocalDate dob) {
-        this.name = name;
+        this.firstName = name;
         this.email = email;
-        this.dob = dob;
+        this.DateOfBirth = dob;
     }
 
     public Long getId() {
@@ -54,12 +54,12 @@ public class Student {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getEmail() {
@@ -70,30 +70,30 @@ public class Student {
         this.email = email;
     }
 
-    public LocalDate getDob() {
-        return dob;
+    public LocalDate getDateOfBirth() {
+        return DateOfBirth;
     }
 
-    public void setDob(LocalDate dob) {
-        this.dob = dob;
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.DateOfBirth = dateOfBirth;
     }
 
-    public Integer getAge() {
-        return Period.between(this.dob, LocalDate.now()).getYears();
+    public Integer getHowOld() {
+        return Period.between(this.DateOfBirth, LocalDate.now()).getYears();
     }
 
-    public void setAge(Integer age) {
-        this.age = age;
+    public void setHowOld(Integer howOld) {
+        this.howOld = howOld;
     }
 
     @Override
     public String toString() {
-        return "Student{" +
+        return "Manager{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", firstName='" + firstName + '\'' +
                 ", email='" + email + '\'' +
-                ", dob=" + dob +
-                ", age=" + age +
+                ", DateOfBirth=" + DateOfBirth +
+                ", howOld=" + howOld +
                 '}';
     }
 }
