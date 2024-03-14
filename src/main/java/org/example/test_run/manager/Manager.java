@@ -4,26 +4,40 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table
+@Table(name = "manager")
 public class Manager {
     @Id
     @SequenceGenerator(
-            name = "student_sequence",
-            sequenceName = "student_sequence",
+            name = "manager_sequence",
+            sequenceName = "manager_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "student_sequence"
+            generator = "manager_sequence"
     )
     private Long id;
     private String firstName;
     private String email;
-    private LocalDate DateOfBirth;
-    @Transient
+    private LocalDate dateOfBirth;
+
+    @OneToMany(mappedBy = "manager", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Franchise> franchises = new HashSet<>();
+
     private Integer howOld;
+
+
+    public Set<Franchise> getFranchises() {
+        return franchises;
+    }
+
+    public void setFranchises(Set<Franchise> franchises) {
+        this.franchises = franchises;
+    }
 
     public Manager() {
     }
@@ -35,7 +49,7 @@ public class Manager {
         this.id = id;
         this.firstName = name;
         this.email = email;
-        this.DateOfBirth = dob;
+        this.dateOfBirth = dob;
     }
 
     public Manager(String name,
@@ -43,7 +57,7 @@ public class Manager {
                    LocalDate dob) {
         this.firstName = name;
         this.email = email;
-        this.DateOfBirth = dob;
+        this.dateOfBirth = dob;
     }
 
     public Long getId() {
@@ -71,15 +85,15 @@ public class Manager {
     }
 
     public LocalDate getDateOfBirth() {
-        return DateOfBirth;
+        return dateOfBirth;
     }
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.DateOfBirth = dateOfBirth;
+        this.dateOfBirth = dateOfBirth;
     }
 
     public Integer getHowOld() {
-        return Period.between(this.DateOfBirth, LocalDate.now()).getYears();
+        return Period.between(this.dateOfBirth, LocalDate.now()).getYears();
     }
 
     public void setHowOld(Integer howOld) {
@@ -92,7 +106,7 @@ public class Manager {
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", email='" + email + '\'' +
-                ", DateOfBirth=" + DateOfBirth +
+                ", dateOfBirth=" + dateOfBirth +
                 ", howOld=" + howOld +
                 '}';
     }
