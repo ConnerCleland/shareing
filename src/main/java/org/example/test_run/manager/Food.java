@@ -1,7 +1,6 @@
 package org.example.test_run.manager;
 
 import jakarta.persistence.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,6 +14,9 @@ public class Food {
 
     @ManyToMany(mappedBy = "foods")
     private Set<Project> projects = new HashSet<>();
+
+    @Transient // This field will not be persisted in the database
+    private int projectCount; // Field to store the count of projects associated with this food
 
     // Constructors, getters, setters, and other methods...
 
@@ -51,12 +53,20 @@ public class Food {
         this.projects = projects;
     }
 
+    public int getProjectCount() {
+        return projectCount;
+    }
+
+    public void setProjectCount(int projectCount) {
+        this.projectCount = projectCount;
+    }
+
     @Override
     public String toString() {
         return "Food{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", projects=" + projects +
+                ", projectCount=" + projectCount + // Include project count in toString method
                 '}';
     }
 }

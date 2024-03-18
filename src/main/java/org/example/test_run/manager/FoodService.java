@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
 @Service
 public class FoodService {
 
@@ -17,11 +16,15 @@ public class FoodService {
     }
 
     public List<Food> getAllFoods() {
-        return foodRepository.findAll();
+        List<Food> foods = foodRepository.findAll();
+        foods.forEach(this::incrementProjectCount); // Increment project count for each food item
+        return foods;
     }
 
     public Optional<Food> getFoodById(Long foodId) {
-        return foodRepository.findById(foodId);
+        Optional<Food> food = foodRepository.findById(foodId);
+        food.ifPresent(this::incrementProjectCount); // Increment project count if food exists
+        return food;
     }
 
     public void addNewFood(Food food) {
@@ -43,5 +46,10 @@ public class FoodService {
             food.setName(name);
             foodRepository.save(food);
         }
+    }
+
+    // Method to increment project count for a given food item
+    private void incrementProjectCount(Food food) {
+        food.setProjectCount(food.getProjectCount() + 1); // Increment project count by one
     }
 }

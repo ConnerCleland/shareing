@@ -11,11 +11,13 @@ import java.util.Optional;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final FoodRepository foodRepository; // Add FoodRepository dependency
     private final TransactionTemplate transactionTemplate;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository, TransactionTemplate transactionTemplate) {
+    public ProjectService(ProjectRepository projectRepository, FoodRepository foodRepository, TransactionTemplate transactionTemplate) {
         this.projectRepository = projectRepository;
+        this.foodRepository = foodRepository; // Initialize FoodRepository
         this.transactionTemplate = transactionTemplate;
     }
 
@@ -44,6 +46,20 @@ public class ProjectService {
                 project.setName(name);
                 projectRepository.save(project);
             }
+            return null; // or any other value if needed
+        });
+    }
+
+    public void addFoodToProject(Long projectId, Long foodId) {
+        transactionTemplate.execute(status -> {
+            Project project = projectRepository.findById(projectId)
+                    .orElseThrow(() -> new IllegalStateException("Project with id " + projectId + " not found"));
+
+            Food food = foodRepository.findById(foodId)
+                    .orElseThrow(() -> new IllegalStateException("Food with id " + foodId + " not found"));
+
+            project.getFoods().add(food);
+            projectRepository.save(project);
             return null; // or any other value if needed
         });
     }
