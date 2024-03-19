@@ -2,26 +2,25 @@ package org.example.test_run.manager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
-    private final FoodRepository foodRepository; // Add FoodRepository dependency
-    private final TransactionTemplate transactionTemplate;
+    private final FoodRepository foodRepository;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository, FoodRepository foodRepository, TransactionTemplate transactionTemplate) {
+    public ProjectService(ProjectRepository projectRepository, FoodRepository foodRepository) {
         this.projectRepository = projectRepository;
-        this.foodRepository = foodRepository; // Initialize FoodRepository
-        this.transactionTemplate = transactionTemplate;
+        this.foodRepository = foodRepository;
     }
 
-    public List<Project> getAllProjects() {
+    public Iterable<Project> getAllProjects() {
         return projectRepository.findAll();
     }
 
@@ -29,38 +28,62 @@ public class ProjectService {
         return projectRepository.findById(id);
     }
 
-    public void addNewProject(Project project) {
+    @Transactional
+    public Set<Long> getFoodIdsForProject(Long projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalStateException("Project with id " + projectId + " not found"));
+
+        Set<Long> foodIds = new HashSet<>();
+        project.getFoods().forEach(food -> foodIds.add(food.getId()));
+        return foodIds;
+    }
+
+    @Transactional
+    public void addNewProject(ProjectRequest projectRequest) {
+        Project project = new Project(projectRequest.getName());
+
+        // Fetch foods by their IDs from the repository
+        Set<Food> foods = new HashSet<>();
+        projectRequest.getFoodIds().forEach(foodId -> {
+            Food food = foodRepository.findById(foodId)
+                    .orElseThrow(() -> new IllegalStateException("Food with ID " + foodId + " not found"));
+            foods.add(food);
+        });
+
+        // Associate fetched foods with the project
+        project.setFoods(foods);
+
+        // Save the project entity
         projectRepository.save(project);
     }
 
+    @Transactional
     public void deleteProject(Long id) {
+        if (!projectRepository.existsById(id)) {
+            throw new IllegalStateException("Project with ID " + id + " does not exist");
+        }
         projectRepository.deleteById(id);
     }
 
-    public void updateProject(Long id, String name) {
-        transactionTemplate.execute(status -> {
-            Project project = projectRepository.findById(id)
-                    .orElseThrow(() -> new IllegalStateException("Project with id " + id + " not found"));
+    @Transactional
+    public void updateProject(Long id, ProjectRequest projectRequest) {
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("Project with ID " + id + " not found"));
 
-            if (name != null && !name.isEmpty()) {
-                project.setName(name);
-                projectRepository.save(project);
-            }
-            return null; // or any other value if needed
-        });
-    }
+        project.setName(projectRequest.getName());
 
-    public void addFoodToProject(Long projectId, Long foodId) {
-        transactionTemplate.execute(status -> {
-            Project project = projectRepository.findById(projectId)
-                    .orElseThrow(() -> new IllegalStateException("Project with id " + projectId + " not found"));
-
+        // Fetch foods by their IDs from the repository
+        Set<Food> foods = new HashSet<>();
+        projectRequest.getFoodIds().forEach(foodId -> {
             Food food = foodRepository.findById(foodId)
-                    .orElseThrow(() -> new IllegalStateException("Food with id " + foodId + " not found"));
-
-            project.getFoods().add(food);
-            projectRepository.save(project);
-            return null; // or any other value if needed
+                    .orElseThrow(() -> new IllegalStateException("Food with ID " + foodId + " not found"));
+            foods.add(food);
         });
+
+        // Associate fetched foods with the project
+        project.setFoods(foods);
+
+        // Save the updated project entity
+        projectRepository.save(project);
     }
 }

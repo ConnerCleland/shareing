@@ -1,8 +1,6 @@
 package org.example.test_run.manager;
 
 import jakarta.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "food")
@@ -11,12 +9,7 @@ public class Food {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-
-    @ManyToMany(mappedBy = "foods")
-    private Set<Project> projects = new HashSet<>();
-
-    @Transient // This field will not be persisted in the database
-    private int projectCount; // Field to store the count of projects associated with this food
+    private String project; // Change projects to a String
 
     // Constructors, getters, setters, and other methods...
 
@@ -45,28 +38,22 @@ public class Food {
         this.name = name;
     }
 
-    public Set<Project> getProjects() {
-        return projects;
+    public String getProject() {
+        return project;
     }
 
-    public void setProjects(Set<Project> projects) {
-        this.projects = projects;
+    public void setProject(String project) {
+        this.project = project;
     }
 
-    public int getProjectCount() {
-        return projectCount;
-    }
-
-    public void setProjectCount(int projectCount) {
-        this.projectCount = projectCount;
-    }
-
+    // toString method
     @Override
     public String toString() {
         return "Food{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", projectCount=" + projectCount + // Include project count in toString method
+                ", project='" + (project != null ? project : "") + '\'' + // Check for null
                 '}';
     }
+
 }

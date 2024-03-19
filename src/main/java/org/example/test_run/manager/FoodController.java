@@ -38,9 +38,11 @@ public class FoodController {
     }
 
     @PutMapping("/{foodId}")
-    public void updateFood(
+    public void updateFoodProject(
             @PathVariable Long foodId,
-            @RequestParam(required = false) String name) {
-        foodService.updateFood(foodId, name);
+            @RequestParam(required = false) String project) {
+        foodService.updateFoodProject(foodId, project);
     }
+
+
 }

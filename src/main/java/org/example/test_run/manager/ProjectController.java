@@ -3,7 +3,7 @@ package org.example.test_run.manager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(path = "api/v1/project")
@@ -17,7 +17,7 @@ public class ProjectController {
     }
 
     @GetMapping
-    public List<Project> getAllProjects() {
+    public Iterable<Project> getAllProjects() {
         return projectService.getAllProjects();
     }
 
@@ -27,9 +27,14 @@ public class ProjectController {
                 .orElseThrow(() -> new IllegalStateException("Project with id " + projectId + " not found"));
     }
 
+    @GetMapping("/{projectId}/foodIds")
+    public Set<Long> getFoodIdsForProject(@PathVariable Long projectId) {
+        return projectService.getFoodIdsForProject(projectId);
+    }
+
     @PostMapping
-    public void addNewProject(@RequestBody Project project) {
-        projectService.addNewProject(project);
+    public void addNewProject(@RequestBody ProjectRequest projectRequest) {
+        projectService.addNewProject(projectRequest);
     }
 
     @DeleteMapping("/{projectId}")
@@ -40,7 +45,8 @@ public class ProjectController {
     @PutMapping("/{projectId}")
     public void updateProject(
             @PathVariable Long projectId,
-            @RequestParam(required = false) String name) {
-        projectService.updateProject(projectId, name);
+            @RequestBody ProjectRequest projectRequest) {
+        projectService.updateProject(projectId, projectRequest);
     }
+
 }
