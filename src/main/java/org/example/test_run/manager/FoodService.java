@@ -11,10 +11,12 @@ import java.util.Optional;
 public class FoodService {
 
     private final FoodRepository foodRepository;
+    private final ManagerRepository managerRepository; // Autowire ManagerRepository
 
     @Autowired
-    public FoodService(FoodRepository foodRepository) {
+    public FoodService(FoodRepository foodRepository, ManagerRepository managerRepository) {
         this.foodRepository = foodRepository;
+        this.managerRepository = managerRepository; // Initialize ManagerRepository
     }
 
     public List<Food> getAllFoods() {
@@ -39,7 +41,7 @@ public class FoodService {
     }
 
     @Transactional
-    public void updateFoodProject(Long foodId, String project) {
+    public void updateFoodProjectAndManager(Long foodId, String project, String managerName) {
         // Retrieve the food entity by ID
         Food food = foodRepository.findById(foodId)
                 .orElseThrow(() -> new IllegalStateException("Food with ID " + foodId + " does not exist"));
@@ -49,10 +51,22 @@ public class FoodService {
             food.setProject(project);
         }
 
+        // Update the manager name if provided
+        if (managerName != null && !managerName.isEmpty()) {
+            // Find the manager entity by name
+            Optional<Manager> managerOptional = managerRepository.findByFirstName(managerName);
+
+            // Check if manager exists
+            if (managerOptional.isPresent()) {
+                // If manager exists, set it for the food
+                food.setManager(managerOptional.get());
+            } else {
+                // If manager does not exist, you may throw an exception or handle it as per your requirements
+                throw new IllegalArgumentException("Manager with name " + managerName + " does not exist");
+            }
+        }
+
         // Save the updated food entity
         foodRepository.save(food);
-    }
-
-    public void updateFood(Food food) {
     }
 }

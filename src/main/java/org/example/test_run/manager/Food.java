@@ -9,7 +9,10 @@ public class Food {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String project; // Change projects to a String
+    private String project; // Changed projects to a String
+    @ManyToOne(fetch = FetchType.EAGER) // Fetch manager eagerly
+    @JoinColumn(name = "manager_id")
+    private Manager manager; // Reference to the Manager entity
 
     // Constructors, getters, setters, and other methods...
 
@@ -46,6 +49,14 @@ public class Food {
         this.project = project;
     }
 
+    public Manager getManager() {
+        return manager;
+    }
+
+    public void setManager(Manager manager) {
+        this.manager = manager;
+    }
+
     // toString method
     @Override
     public String toString() {
@@ -53,7 +64,7 @@ public class Food {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", project='" + (project != null ? project : "") + '\'' + // Check for null
+                ", manager='" + (manager != null ? manager.getFirstName() : "") + '\'' + // Get manager's first name
                 '}';
     }
-
 }

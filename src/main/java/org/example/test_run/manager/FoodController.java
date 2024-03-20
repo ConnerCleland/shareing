@@ -38,11 +38,10 @@ public class FoodController {
     }
 
     @PutMapping("/{foodId}")
-    public void updateFoodProject(
+    public void updateFoodProjectAndManager(
             @PathVariable Long foodId,
-            @RequestParam(required = false) String project) {
-        foodService.updateFoodProject(foodId, project);
+            @RequestParam(required = false) String project,
+            @RequestParam(required = false) String managerName) {
+        foodService.updateFoodProjectAndManager(foodId, project, managerName);
     }
-
-
 }
