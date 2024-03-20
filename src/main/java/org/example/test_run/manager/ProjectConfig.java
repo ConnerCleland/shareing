@@ -5,32 +5,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
-import java.util.Random;
 
 @Configuration
 public class ProjectConfig {
 
     @Bean
-    CommandLineRunner projectCommandLineRunner(ProjectRepository projectRepository, FoodRepository foodRepository) {
+    CommandLineRunner projectCommandLineRunner(ProjectRepository repository) {
         return args -> {
-            // Fetch all foods from the repository
-            List<Food> foods = foodRepository.findAll();
+            Project project1 = new Project("Project A");
+            Project project2 = new Project("Project B");
+            Project project3 = new Project("Project C");
 
-            // Fetch all projects from the repository
-            List<Project> projects = projectRepository.findAll();
-
-            // Randomly assign foods to projects
-            Random random = new Random();
-            projects.forEach(project -> {
-                int numFoods = random.nextInt(foods.size()); // Random number of foods to assign to each project
-                for (int i = 0; i < numFoods; i++) {
-                    Food randomFood = foods.get(random.nextInt(foods.size()));
-                    project.getFoods().add(randomFood);
-                }
-            });
-
-            // Save the updated projects back to the repository
-            projectRepository.saveAll(projects);
+            repository.saveAll(List.of(project1, project2, project3));
         };
     }
 }

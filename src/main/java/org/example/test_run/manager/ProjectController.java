@@ -49,4 +49,9 @@ public class ProjectController {
         projectService.updateProject(projectId, projectRequest);
     }
 
+    // Add food to project
+    @PostMapping("/{projectId}/addFood/{foodId}")
+    public void addFoodToProject(@PathVariable Long projectId, @PathVariable Long foodId) {
+        projectService.addFoodToProject(projectId, foodId);
+    }
 }

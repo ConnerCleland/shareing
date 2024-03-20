@@ -86,4 +86,19 @@ public class ProjectService {
         // Save the updated project entity
         projectRepository.save(project);
     }
+
+    @Transactional
+    public void addFoodToProject(Long projectId, Long foodId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalStateException("Project with ID " + projectId + " not found"));
+
+        Food food = foodRepository.findById(foodId)
+                .orElseThrow(() -> new IllegalStateException("Food with ID " + foodId + " not found"));
+
+        // Associate the food with the project
+        project.getFoods().add(food);
+
+        // Save the project entity
+        projectRepository.save(project);
+    }
 }

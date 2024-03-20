@@ -12,10 +12,7 @@ public class Food {
     private String project; // Changed projects to a String
     @ManyToOne(fetch = FetchType.EAGER) // Fetch manager eagerly
     @JoinColumn(name = "manager_id")
-    private Manager manager; // Reference to the Manager entity
-
-    // Constructors, getters, setters, and other methods...
-
+    private Manager manager; 
     public Food() {
     }
 
